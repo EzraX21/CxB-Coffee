@@ -1,36 +1,10 @@
 from order import OrderItem, OrderStorage
-from cli import MENU, show_menu
+from cli_tools import MENU, show_menu, next_order_no, find_price, calc_subtotal, check_qty
 from questionary import select, text
 
 FILE = 'orders.json'
 
-def next_order_no(storage: OrderStorage) -> int:
-    """返回下一个可用的订单号,现有最大号 + 1,没有订单时为 1."""
 
-    items = storage.load_all()
-    max_no = 0
-    for item in items:
-        if item.order_no > max_no:
-            max_no = item.order_no
-    return max_no + 1
-
-def check_qty(value: str):
-    """合法返回 True,不合法返回错误提示."""
-    if not value.isdigit():
-        return "请输入数字"
-    if int(value) <= 0:
-        return "数量要大于 0"
-    return True
-
-def find_price(item: str) -> int | None:
-    for no in MENU:
-        item_name, price = MENU[no]
-        if item_name == item:
-            return price
-    return None
-
-def calc_subtotal( qty: int, price: int) -> int:
-    return qty * price
 
 def main() -> None:
     storage = OrderStorage(FILE)
