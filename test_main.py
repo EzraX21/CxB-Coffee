@@ -38,7 +38,7 @@ def test_calc_subtotal():
 
 def test_find_price():
     assert find_price('拿铁') == 2800
-    assert find_price('测试') == None
+    assert find_price('测试') is None
 
 def test_next_order_no_empty(tmp_path:Path):
     storage = OrderStorage(str(tmp_path / "nothing.json")) 
@@ -46,6 +46,6 @@ def test_next_order_no_empty(tmp_path:Path):
 
 def test_next_order_no_existing(tmp_path:Path):
     storage = OrderStorage(str(tmp_path / 'orders.json'))
-    storage.append(OrderItem(1, '美式', 1, 2200))
-    storage.append(OrderItem(2, '拿铁', 1, 2800))
-    assert next_order_no(storage) == 3
+    storage.append(OrderItem(7, '美式', 1, 2200))
+    storage.append(OrderItem(3, '拿铁', 1, 2800))
+    assert next_order_no(storage) == 8
