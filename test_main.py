@@ -1,4 +1,4 @@
-from main import OrderItem, OrderStorage
+from order import OrderItem, OrderStorage
 from pathlib import Path
 
 
