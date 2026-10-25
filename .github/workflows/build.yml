@@ -63,7 +63,7 @@ jobs:
           uv run --no-sync pyinstaller \
             --onefile \
             --console \
-            --name "$APP_NAME" \
+            --name "$APP_NAME-${{ matrix.artifact }}" \
             --clean \
             --noconfirm \
             "${ICON_ARGS[@]}" \
@@ -92,8 +92,15 @@ jobs:
           path: artifacts
           merge-multiple: true
 
-      - name: 列出产物
-        run: ls -lR artifacts
+      - name: 校验三个平台的产物齐全
+        run: |
+          count=$(find artifacts -type f | wc -l)
+          echo "产物文件数量: $count"
+          find artifacts -type f -exec ls -lh {} \;
+          if [ "$count" -ne 3 ]; then
+            echo "::error::期望 3 个平台产物，实际只有 $count 个（同名文件被覆盖了？）"
+            exit 1
+          fi
 
       - name: 发布到 GitHub Release
         uses: softprops/action-gh-release@v2
