@@ -71,11 +71,32 @@ jobs:
 
           ls -lh dist/
 
+      - name: 压成 zip
+        shell: bash
+        env:
+          PKG_NAME: ${{ env.APP_NAME }}-${{ matrix.artifact }}
+        run: |
+          uv run --no-sync python - <<'PY'
+          import os, pathlib, shutil, zipfile
+          dist = pathlib.Path("dist")
+          files = [f for f in dist.iterdir() if f.is_file() and f.suffix != ".zip"]
+          out = dist / f"{os.environ['PKG_NAME']}.zip"
+          with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
+              for f in files:
+                  info = zipfile.ZipInfo.from_file(f, f.name)
+                  info.compress_type = zipfile.ZIP_DEFLATED
+                  with open(f, "rb") as src, z.open(info, "w") as dst:
+                      shutil.copyfileobj(src, dst)
+          print(f"{out}  {out.stat().st_size / 1024 / 1024:.2f} MB")
+          for f in files:
+              print(f"  内含: {f.name}  权限: {oct(f.stat().st_mode)[-3:]}")
+          PY
+
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.APP_NAME }}-${{ matrix.artifact }}
-          path: dist/*
+          path: dist/*.zip
           if-no-files-found: error
 
   release:
@@ -92,18 +113,18 @@ jobs:
           path: artifacts
           merge-multiple: true
 
-      - name: 校验三个平台的产物齐全
+      - name: 校验三个平台的压缩包齐全
         run: |
-          count=$(find artifacts -type f | wc -l)
-          echo "产物文件数量: $count"
+          count=$(find artifacts -type f -name '*.zip' | wc -l)
+          echo "压缩包数量: $count"
           find artifacts -type f -exec ls -lh {} \;
           if [ "$count" -ne 3 ]; then
-            echo "::error::期望 3 个平台产物，实际只有 $count 个（同名文件被覆盖了？）"
+            echo "::error::期望 3 个平台压缩包，实际只有 $count 个"
             exit 1
           fi
 
       - name: 发布到 GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: artifacts/*
+          files: artifacts/*.zip
           generate_release_notes: true
