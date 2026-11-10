@@ -1,6 +1,8 @@
 from pathlib import Path
-from order import OrderItem, OrderStorage
+
 from cli_tools import calc_subtotal, find_price, next_order_no
+from order import OrderItem, OrderStorage
+
 
 def test_dict_roundtrip():
     item = OrderItem(1,'拿铁',2,2800)
@@ -41,7 +43,7 @@ def test_find_price():
     assert find_price('测试') is None
 
 def test_next_order_no_empty(tmp_path:Path):
-    storage = OrderStorage(str(tmp_path / "nothing.json")) 
+    storage = OrderStorage(str(tmp_path / "nothing.json"))
     assert next_order_no(storage) == 1
 
 def test_next_order_no_existing(tmp_path:Path):

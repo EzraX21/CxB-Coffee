@@ -1,6 +1,14 @@
-from order import OrderItem, OrderStorage
-from cli_tools import MENU, show_menu, next_order_no, find_price, calc_subtotal, check_qty
 from questionary import select, text
+
+from cli_tools import (
+    MENU,
+    calc_subtotal,
+    check_qty,
+    find_price,
+    next_order_no,
+    show_menu,
+)
+from order import OrderItem, OrderStorage
 
 FILE = 'orders.json'
 
@@ -13,13 +21,13 @@ def main() -> None:
     show_menu()
 
     while True:
-        
-        
+
+
         options = []
         for d in MENU:
             options.append(MENU[d][0])
         options.append('退出/合计')
-        
+
         choice_item = select('请选择你想买的商品',choices=options).ask()
 
         if choice_item is None or choice_item == '退出/合计':
@@ -32,7 +40,7 @@ def main() -> None:
         qty_text = text('数量', default="1", validate=check_qty).ask()
         qty = int(qty_text)
         items.append(OrderItem(cur_order_no, choice_item, qty, item_price))
-    
+
     if len(items) == 0:
         print("没有点任何商品")
         return

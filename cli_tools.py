@@ -1,4 +1,5 @@
 import shutil
+
 from order import OrderStorage
 
 MENU = {
@@ -21,7 +22,7 @@ def show_menu() -> None:
     """接受常量MENU并格式化输出."""
 
     print(show_title(" CxB Coffee "))
-    for no in MENU:
+    for no in MENU:  # noqa: PLC0206
         name, price = MENU[no]
         print(f'{no}.{name} ￥{price/100:.2f}')
     print()
@@ -32,8 +33,7 @@ def next_order_no(storage: OrderStorage) -> int:
     items = storage.load_all()
     max_no = 0
     for item in items:
-        if item.order_no > max_no:
-            max_no = item.order_no
+        max_no = max(max_no, item.order_no)
     return max_no + 1
 
 def check_qty(value: str):
@@ -45,7 +45,7 @@ def check_qty(value: str):
     return True
 
 def find_price(item: str) -> int | None:
-    for no in MENU:
+    for no in MENU:  # noqa: PLC0206
         item_name, price = MENU[no]
         if item_name == item:
             return price

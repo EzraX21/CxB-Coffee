@@ -1,5 +1,6 @@
 import json
 
+
 class OrderItem:
     """一行订单条目.
 
@@ -27,11 +28,11 @@ class OrderItem:
                 'item_price':self.item_price}
 
     @classmethod
-    def from_dict(cls,data: dict) -> "OrderItem":
+    def from_dict(cls,data: dict) -> OrderItem:
         """将一个订单字典转化成一个订单类实例.
         返回:
 
-            对应订单类实例.   
+            对应订单类实例.
         """
         return cls(
             order_no = data['order_no'],
@@ -70,9 +71,9 @@ class OrderStorage:
 
         all_items = self.load_all()
         all_items.append(item)
-        item = []
+        item = []  # pyright: ignore[reportAssignmentType]
         for d in all_items:
-            item.append(d.to_dict())
+            item.append(d.to_dict())  # pyright: ignore[reportAttributeAccessIssue]
 
         with open(self.path,'w',encoding='utf-8') as f:
             json.dump(item ,f ,ensure_ascii=False ,indent=4)
