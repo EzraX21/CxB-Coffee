@@ -51,5 +51,5 @@ def find_price(item: str) -> int | None:
             return price
     return None
 
-def calc_subtotal( qty: int, price: int) -> int:
+def calc_subtotal(qty: int, price: int) -> int:
     return qty * price

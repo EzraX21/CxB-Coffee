@@ -17,7 +17,7 @@ FILE = 'orders.json'
 def main() -> None:
     storage = OrderStorage(FILE)
     items = []
-    cur_order_no =next_order_no(storage)
+    cur_order_no = next_order_no(storage)
     show_menu()
 
     while True:

@@ -71,9 +71,8 @@ class OrderStorage:
 
         all_items = self.load_all()
         all_items.append(item)
-        item = []  # pyright: ignore[reportAssignmentType]
-        for d in all_items:
-            item.append(d.to_dict())  # pyright: ignore[reportAttributeAccessIssue]
+
+        records = [d.to_dict() for d in all_items]
 
         with open(self.path,'w',encoding='utf-8') as f:
-            json.dump(item ,f ,ensure_ascii=False ,indent=4)
+            json.dump(records ,f ,ensure_ascii=False ,indent=4)
