@@ -30,11 +30,7 @@ def show_menu() -> None:
 def next_order_no(storage: OrderStorage) -> int:
     """返回下一个可用的订单号,现有最大号 + 1,没有订单时为 1."""
 
-    items = storage.load_all()
-    max_no = 0
-    for item in items:
-        max_no = max(max_no, item.order_no)
-    return max_no + 1
+    return storage.max_order_no() + 1
 
 def check_qty(value: str):
     """合法返回 True,不合法返回错误提示."""
@@ -43,6 +39,28 @@ def check_qty(value: str):
     if int(value) <= 0:
         return "数量要大于 0"
     return True
+
+def check_order_no(value: str):
+    """订单号校验: 合法返回 True,不合法返回错误提示."""
+    if not value.isdigit():
+        return "请输入数字"
+    return True
+
+def show_order(storage: OrderStorage, order_no: int) -> None:
+    """按订单号打印一张订单的明细和合计."""
+
+    items = storage.find_by_order_no(order_no)
+    if not items:
+        print(f'没有找到订单 #{order_no:03d}')
+        return
+
+    print(show_title(f" 订单 #{order_no:03d} "))
+    total = 0
+    for it in items:
+        subtotal = calc_subtotal(it.item_qty, it.item_price)
+        print(f'{it.item_name} x {it.item_qty} ￥{subtotal/100:.2f}')
+        total += subtotal
+    print(f'合计: ￥{total/100:.2f}\n')
 
 def find_price(item: str) -> int | None:
     for no in MENU:  # noqa: PLC0206

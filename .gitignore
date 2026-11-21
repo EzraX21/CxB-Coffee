@@ -9,6 +9,8 @@ wheels/
 # Virtual environments
 .venv
 orders.json
+orders.json.bak
+orders.db
 .pytest_cache/
 .tmp/
 *.spec
